@@ -30,6 +30,7 @@ public:
 	DoublyLinkedList(const DoublyLinkedList<T>&);
 	DoublyLinkedList(DoublyLinkedList<T>&&);
 	DoublyLinkedList();
+        ~DoublyLinkedList();
 	void PushBack(T data);
 	void PushFront(T data);
 	void PopBack();
@@ -146,6 +147,11 @@ DoublyLinkedList<T>::DoublyLinkedList()
 	tail_ = head_ = nullptr;
 	size_ = 0;
 	return;
+}
+template<class T>
+~DoublyLinkedList::DoublyLinkedList(){
+    Clear();
+    return;
 }
 template<class T>
 void DoublyLinkedList<T>::PushBack(T data)
