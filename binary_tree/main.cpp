@@ -1,9 +1,8 @@
 #include <iostream>
 #include <string>
 #include "map.h"
+#include "map.cpp"
 using namespace std;
-
-
 
 int main()
 {
