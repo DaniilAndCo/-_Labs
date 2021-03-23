@@ -8,13 +8,7 @@ template <typename T1, typename T2>
         Node* left_;
         Node* right_;
         Node* parent_;
-        Node(const pair<T1, T2>& data, Node* parent = nullptr, Node* left = nullptr, Node* right = nullptr)
-        {
-            data_ = data;
-            left_ = left;
-            right_ = right;
-            parent_ = parent;
-        }
+        Node(const pair<T1, T2>& data, Node* parent = nullptr, Node* left = nullptr, Node* right = nullptr) : data_(data), left_(left), right_(right), parent_(parent) {}
     };
 
     template <typename T1, typename T2>
@@ -108,11 +102,7 @@ template <typename T1, typename T2>
     }
 
     template <typename T1, typename T2>
-    Map<T1, T2>::Map()
-    {
-        root_ = nullptr;
-        size_ = 0;
-    }
+    Map<T1, T2>::Map() : root_(nullptr) : size_(0) {}
 
     template <typename T1, typename T2>
     Map<T1, T2>::Map(Map<T1, T2>&& other)
