@@ -54,18 +54,38 @@ template <typename T1, typename T2>
     }
 
     template <typename T1, typename T2>
-    typename Map<T1, T2>::Node* Map<T1, T2>::NextForPos(Node* temp)
+    typename Map<T1, T2>::Node* Map<T1, T2>::Next(Node* temp)
     {
         if (temp->right_) {
             temp = temp->right_;
             while (temp->left_)
                 temp = temp->left_;
         }
-        else if (temp->left_) {
+        else if (temp->parent_)
+        {
+            Node* temp1 = temp->parent_;
+            while (temp->data_.first >= temp1->data_.first)
+            temp1 = temp1->parent_;
+            temp = temp1;
+        } else return nullptr;
+        return temp;
+    }
+
+    template <typename T1, typename T2>
+    typename Map<T1, T2>::Node* Map<T1, T2>::Previous(Node* temp)
+    {
+        if (temp->left_) {
             temp = temp->left_;
             while (temp->right_)
                 temp = temp->right_;
         }
+        else if (temp->parent_)
+        {
+            Node* temp1 = temp->parent_;
+            while (temp->data_.first <= temp1->data_.first)
+            temp1 = temp1->parent_;
+            temp = temp1;
+        } else return nullptr;
         return temp;
     }
 
@@ -102,7 +122,7 @@ template <typename T1, typename T2>
     }
 
     template <typename T1, typename T2>
-    Map<T1, T2>::Map() : root_(nullptr) : size_(0) {}
+    Map<T1, T2>::Map() : root_(nullptr), size_(0) {}
 
     template <typename T1, typename T2>
     Map<T1, T2>::Map(Map<T1, T2>&& other)
@@ -192,17 +212,20 @@ template <typename T1, typename T2>
             temp->right_->parent_ = temp->parent_;
             delete temp;
         }
-        else if (temp != root_) {
-            if (auto subst = NextForPos(temp)) {
+        else if (size_ > 1)
+        {
+            Node* subst;
+            if ((subst = Next(temp)) || (subst = Previous(temp))) {
                 T1 KeyCopy = subst->data_.first;
                 temp->data_.second = subst->data_.second;
                 Remove(subst->data_.first);
                 temp->data_.first = KeyCopy;
                 ++size_;
             }
-        }
-        else {
+        } else
+        {
             delete temp;
+            root_ = nullptr;
         }
         --size_;
         return true;

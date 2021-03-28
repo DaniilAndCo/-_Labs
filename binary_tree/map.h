@@ -13,12 +13,21 @@ private:
     Node* Insert_(const pair<T1, T2>&, Node*, Node*);
     void Clear_(Node*);
     void Print_(Node*);
-    Node* NextForPos(Node*);
+    Node* Next(Node*);
+    Node* Previous(Node*);
     void CopyTree(Node*);
     void LeftOrRightParent(Node*, Node*);
     Node* Find_(const T1&, Node*);
 
 public:
+    void next(T1 key)
+    {
+        std::cout << Next(Find_(key, root_))->data_.second;
+    }
+    void prev(T1 key)
+    {
+        std::cout << Previous(Find_(key, root_))->data_.second;
+    } 
     Map();
     Map(Map<T1, T2>&&);
     Map(const Map<T1, T2>&);

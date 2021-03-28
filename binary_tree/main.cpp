@@ -14,19 +14,20 @@ int main()
     ages_and_names.Insert(make_pair(5, "Nastya"));
     ages_and_names.Insert(make_pair(7, "Nikita"));
     ages_and_names.Insert(make_pair(10, "Vadim"));
-  
-    Map<int, string> ages_and_names1 = ages_and_names;
-    ages_and_names1.Print();
+    ages_and_names.Print();
+    ages_and_names.Remove(25);
+    ages_and_names.Print();
+    ages_and_names.Remove(20);
+    ages_and_names.Print();
+    ages_and_names.Remove(7);
+    ages_and_names.Print();
+    ages_and_names.Remove(10);
+    ages_and_names.Print();
+    ages_and_names.Remove(5);
     ages_and_names.Print();
     ages_and_names.Remove(1);
-    ages_and_names.Remove(8);
-    ages_and_names1.Print();
     ages_and_names.Print();
-    ages_and_names = move(ages_and_names1);
-    ages_and_names1.Print();
-    ages_and_names.Print();
+    
 
-    ages_and_names1.Clear();
-    ages_and_names.Clear();
     return 0;
 }
