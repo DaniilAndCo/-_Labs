@@ -1,19 +1,19 @@
 #pragma once
-#include "Map2.cpp"
-#include "Map2.h"
+#include ".\map1\map1.h"
+#include ".\map1\map1.cpp"
 using namespace std;
 template<typename T>
-class Set2
+class Set1
 {
 private:
-	Map2<T, T> set_;
+	Map1<T, T> set_;
 
 public:
-	Set2()
+	Set1()
 	{
 
 	}
-	~Set2()
+	~Set1()
 	{
 		set_.Clear();
 	}
@@ -44,16 +44,16 @@ public:
 	class Iterator : std::iterator<std::bidirectional_iterator_tag, T>
 	{
 	private:
-		typename Map2<T, T> :: Iterator it;
+		typename Map1<T, T> :: Iterator it;
 	public:
 		Iterator() {
 
 		}
-		Iterator(const typename Map2<T, T>::Iterator& other)
+		Iterator(const typename Map1<T, T>::Iterator& other)
 		{
 			this->it = other;
 		}
-		Iterator(const Set2<T>::Iterator& other){
+		Iterator(const Set1<T>::Iterator& other){
 			this->it = other.it;
 		}
 		// auto operator->() {

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include "set2.h"
-#include "set1.h"
+#include ".\set2\set2.h"
+#include ".\set1\set1.h"
 using namespace std;
 
 int main()

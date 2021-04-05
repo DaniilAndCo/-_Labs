@@ -1,7 +1,7 @@
-#include "Map2.h"
+#include "map1.h"
 
     template <typename T1, typename T2>
-    class Map2<T1, T2>::Node
+    class Map1<T1, T2>::Node
     {
     public:
         pair<T1, T2> data_;
@@ -12,7 +12,7 @@
     };
 
     template <typename T1, typename T2>
-    typename Map2<T1, T2>::Node* Map2<T1, T2>::Insert_(const pair<T1, T2>& data, Node* temp, Node* parent)
+    typename Map1<T1, T2>::Node* Map1<T1, T2>::Insert_(const pair<T1, T2>& data, Node* temp, Node* parent)
     {
         auto has = Find_(data.first, root_);
         if (has)
@@ -25,7 +25,6 @@
             if (!root_)
                 root_ = temp;
             ++size_;
-            AddToList(temp);
         }
         else {
             parent = temp;
@@ -38,7 +37,7 @@
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::Clear_(Node* temp)
+    void Map1<T1, T2>::Clear_(Node* temp)
     {
         if (temp) {
             Clear_(temp->left_);
@@ -48,7 +47,7 @@
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::Print_(Node* temp)
+    void Map1<T1, T2>::Print_(Node* temp)
     {
         if (temp) {
             Print_(temp->left_);
@@ -58,7 +57,7 @@
     }
 
     template <typename T1, typename T2>
-    typename Map2<T1, T2>::Node* Map2<T1, T2>::Next(Node* temp)
+    typename Map1<T1, T2>::Node* Map1<T1, T2>::Next(Node* temp)
     {
         if (temp->right_) {
             temp = temp->right_;
@@ -76,7 +75,7 @@
     }
 
     template <typename T1, typename T2>
-    typename Map2<T1, T2>::Node* Map2<T1, T2>::Previous(Node* temp)
+    typename Map1<T1, T2>::Node* Map1<T1, T2>::Previous(Node* temp)
     {
         if (temp->left_) {
             temp = temp->left_;
@@ -94,7 +93,7 @@
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::CopyTree(Node* temp)
+    void Map1<T1, T2>::CopyTree(Node* temp)
     {
         if (!temp)
             return;
@@ -104,7 +103,7 @@
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::LeftOrRightParent(Node* temp, Node* value)
+    void Map1<T1, T2>::LeftOrRightParent(Node* temp, Node* value)
     {
         if (temp->parent_->data_.first >= temp->data_.first)
             temp->parent_->left_ = value;
@@ -113,7 +112,7 @@
     }
 
     template <typename T1, typename T2>
-    typename Map2<T1, T2>::Node* Map2<T1, T2>::Find_(const T1& key, Node* temp)
+    typename Map1<T1, T2>::Node* Map1<T1, T2>::Find_(const T1& key, Node* temp)
     {
         if (!temp)
             return temp;
@@ -126,10 +125,10 @@
     }
 
     template <typename T1, typename T2>
-    Map2<T1, T2>::Map2() : root_(nullptr), size_(0) {}
+    Map1<T1, T2>::Map1() : root_(nullptr), size_(0) {}
 
     template <typename T1, typename T2>
-    Map2<T1, T2>::Map2(Map2<T1, T2>&& other)
+    Map1<T1, T2>::Map1(Map1<T1, T2>&& other)
     {
         root_ = other.root_;
         size_ = other.size_;
@@ -138,7 +137,7 @@
     }
 
     template <typename T1, typename T2>
-    Map2<T1, T2>::Map2(const Map2<T1, T2>& other)
+    Map1<T1, T2>::Map1(const Map1<T1, T2>& other)
     {
         root_ = nullptr;
         size_ = 0;
@@ -146,33 +145,19 @@
     }
 
     template <typename T1, typename T2>
-    Map2<T1, T2>::~Map2()
+    Map1<T1, T2>::~Map1()
     {
         Clear();
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::AddToList(Map2<T1, T2>::Node* temp)
-    {   
-        if (temp == FindMax()) list_of_nodes_.push_back(temp);
-            else if (temp == FindMin()) list_of_nodes_.push_front(temp);
-                else list_of_nodes_.insert(find(list_of_nodes_.begin(), list_of_nodes_.end(), Next(temp)), temp);
-    }
-
-    template <typename T1, typename T2>
-    void Map2<T1, T2>::RemoveFromList(Map2<T1, T2>::Node* temp)
+    void Map1<T1, T2>::Insert(const pair<T1, T2>& data)
     {
-        list_of_nodes_.erase(find(list_of_nodes_.begin(), list_of_nodes_.end(), temp));
+        Insert_(data, root_, nullptr);
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::Insert(const pair<T1, T2>& data)
-    {
-         Insert_(data, root_, nullptr);
-    }
-
-    template <typename T1, typename T2>
-    T2& Map2<T1, T2>::operator[](const T1& key)
+    T2& Map1<T1, T2>::operator[](const T1& key)
     {
         if (Node* temp = Find_(key, root_))
             return temp->data_.second;
@@ -182,7 +167,7 @@
     }
 
     template <typename T1, typename T2>
-    T2 Map2<T1, T2>::operator[](const T1& key) const
+    T2 Map1<T1, T2>::operator[](const T1& key) const
     {
         if (Node* temp = Find_(key, root_))
             return temp->data_.second;
@@ -192,7 +177,7 @@
     }
 
     template <typename T1, typename T2>
-    Map2<T1, T2>& Map2<T1, T2>::operator=(Map2<T1, T2>&& other)
+    Map1<T1, T2>& Map1<T1, T2>::operator=(Map1<T1, T2>&& other)
     {
         Clear();
         root_ = other.root_;
@@ -203,7 +188,7 @@
     }
 
     template <typename T1, typename T2>
-    Map2<T1, T2>& Map2<T1, T2>::operator=(const Map2<T1, T2>& other)
+    Map1<T1, T2>& Map1<T1, T2>::operator=(const Map1<T1, T2>& other)
     {
         Clear();
         CopyTree(other->root_);
@@ -211,27 +196,23 @@
     }
 
     template <typename T1, typename T2>
-    bool Map2<T1, T2>::Remove(const T1& key)
+    bool Map1<T1, T2>::Remove(const T1& key)
     {
         auto temp = Find_(key, root_);
-
         if (!temp)
             return false;
         if (temp->left_ == temp->right_ && temp->right_ == nullptr && temp != root_) {
             LeftOrRightParent(temp, nullptr);
-            RemoveFromList(temp);
             delete temp;
         }
         else if (temp->left_ && !temp->right_ && temp != root_) {
             LeftOrRightParent(temp, temp->left_);
             temp->left_->parent_ = temp->parent_;
-            RemoveFromList(temp);
             delete temp;
         }
         else if (!temp->left_ && temp->right_ && temp != root_) {
             LeftOrRightParent(temp, temp->right_);
             temp->right_->parent_ = temp->parent_;
-            RemoveFromList(temp);
             delete temp;
         }
         else if (size_ > 1)
@@ -247,7 +228,6 @@
         }
         else
         {
-            RemoveFromList(temp);
             delete temp;
             root_ = nullptr;
         }
@@ -256,7 +236,7 @@
     }
 
     template <typename T1, typename T2>
-    void Map2<T1, T2>::Print()
+    void Map1<T1, T2>::Print()
     {
         cout << size_ << " | ";
         Print_(root_);
@@ -264,7 +244,7 @@
     }
     
     template <typename T1, typename T2>
-    void Map2<T1, T2>::Clear()
+    void Map1<T1, T2>::Clear()
     {
         Clear_(this->root_);
         this->root_ = nullptr;
@@ -272,13 +252,13 @@
     }
 
     template <typename T1, typename T2>
-    bool Map2<T1, T2>::IsEmpty() const
+    bool Map1<T1, T2>::IsEmpty() const
     {
         return (size_ == 0);
     }
 
     template <typename T1, typename T2>
-    size_t Map2<T1, T2>::GetSize() const
+    size_t Map1<T1, T2>::GetSize() const
     {
         return size_;
     }
