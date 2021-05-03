@@ -18,23 +18,20 @@ class RenderUsaMap : public QWidget
 public:
     RenderUsaMap(QWidget *parent = nullptr);
     ~RenderUsaMap();
-private slots:
-    void GetFile();
 private:
-    int biasX = 170;
-    int biasY = 100;
-    int sizeRatio = 7;
-    QPainter *painter;
-    QFile file;
-    QJsonObject jObject;
-    QMap<QString, double> map;
+    size_t biasX = 170;
+    size_t biasY = 100;
+    size_t sizeRatio = 7;
+    QPainter *painter_;
+    QFile file_;
+    QJsonObject jObject_;
+    QMap<QString, double> map_;
+    QList<QPair<QPolygonF, double>> polygons_;
     void SetPolygonsColors();
     void GetSentiments();
-    void SetFontSize(const int&);
     void DrawPolygons() const;
     void GetJsonFromFile();
     void GetPolygonsFromJson();
-    QList<QPair<QPolygonF, double>> polygons;
     void paintEvent(QPaintEvent*);
 };
 #endif // RENDERUSAMAP_H
