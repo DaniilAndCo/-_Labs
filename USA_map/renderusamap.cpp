@@ -1,64 +1,57 @@
 #include "renderusamap.h"
-#include <QThread>
+
 RenderUsaMap::RenderUsaMap(QWidget *parent) : QWidget(parent)
 {
     resize(1000, 750);
+
     setWindowTitle(tr("The map of the USA by Daniel Bondarkov"));
-    GetJsonFromFile();
+    map_ = GetDictionaryFromFile("sentiments.csv");
     GetPolygonsFromJson();
-    GetSentiments();
-    SetPolygonsColors();
+    SetStatesColors();
 }
 
-void RenderUsaMap::GetSentiments()
+void RenderUsaMap::DrawStates() const
 {
-    QFile* dictionary = new QFile("sentiments.csv");
-    dictionary->open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream in(dictionary);
-    while (!in.atEnd())
+    painter_->setPen(Qt::black);
+    for (const auto &state : states_)
     {
-        auto line = QString(in.readLine());
-        auto pair = line.trimmed().split(QLatin1Char(','));
-        map_.insert(pair.first(), pair.last().toDouble());
+       state.DrawState(painter_);
     }
-    dictionary->close();
-    delete dictionary;
-}
-
-void RenderUsaMap::GetJsonFromFile()
-{
-    file_.setFileName("coords.json");
-    file_.open(QIODevice::ReadOnly | QIODevice::Text);
-    QJsonDocument doc = QJsonDocument::fromJson(file_.readAll());
-    file_.close();
-    jObject_ = QJsonObject(doc.object()); //get the jsonObject
 }
 void RenderUsaMap::GetPolygonsFromJson()
 {
-    auto keys = jObject_.keys();
-    QPolygonF polygon;
-    for (const auto &key : keys)
+    jObject_ = GetJsonFromFile("coords.json");
+    keys_ = jObject_.keys();
+    for (auto i = 0; i < keys_.size(); ++i)
     {
-        polygon.clear();
+        states_.push_back(State());
+    }
+    QPolygonF polygon;
+    size_t counter = 0;
+    for (const auto &key : keys_)
+    {
         for (const auto &i : jObject_[key].toArray())
         {
+            polygon.clear();
             auto coordsArray = i.toArray().size() > 1 ? i.toArray() : i.toArray().first().toArray();
             for (const auto &j : coordsArray)
             {
-                auto c = QPointF((j.toArray().first().toDouble() + biasX) * sizeRatio, (biasY - j.toArray().last().toDouble())*sizeRatio);
+                auto c = QPointF((j.toArray().first().toDouble() + biasX) * sizeRatio,
+                                 (biasY - j.toArray().last().toDouble())*sizeRatio);
                 polygon << c;
             }
+            states_[counter].AddPolygon(polygon);
         }
-        polygons_.push_back(qMakePair(polygon, 0.0));
+        ++counter;
     }
 }
 
-void RenderUsaMap::SetPolygonsColors()
+void RenderUsaMap::SetStatesColors()
 {
     QPointF tweetPoint;
-    QFile *tweets = new QFile("tweets.txt");
-    tweets->open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream in(tweets);
+    QFile tweets = QFile("tweets.txt");
+    tweets.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream in(&tweets);
     QRegularExpression coords(".{1}(-?\\d*\\.?\\d+).{2}(-?\\d*.?\\d+)");
     QRegularExpression time("\\d{2}:\\d{2}:\\d{2}");
     while (!in.atEnd())
@@ -69,47 +62,21 @@ void RenderUsaMap::SetPolygonsColors()
         {
             tweetPoint = QPointF((biasX + matchCoords.captured().split('[').last().split(", ").last().toDouble()) * sizeRatio,
                                  (biasY - matchCoords.captured().split('[').last().split(", ").first().toDouble()) * sizeRatio);
-            for (auto &polygon : polygons_)
+            for (auto &state : states_)
             {
-                if (polygon.first.containsPoint(tweetPoint, Qt::OddEvenFill))
-                {
-                    auto matchTime = time.match(line);
-                    auto tweet = line.remove(0, matchTime.capturedEnd()).trimmed().toLower().split(QRegularExpression("\\s+"));
-                    for (const auto &d : map_)
-                    {
-                        if (tweet.contains(map_.key(d)))
-                            polygon.second += d;
-                    }
-                    /*for (const auto &word : line.remove(0, matchTime.capturedEnd()).trimmed().split(QRegularExpression("\\s+")))
-                    {
-                        if (map_.contains(word.toLower()))
-                            polygon.second += map_[word.toLower()];
-                    }*/
-                    break;
-                }
+                auto matchTime = time.match(line);
+                auto tweet = line.remove(0, matchTime.capturedEnd()).trimmed().toLower();
+                state.CalculateProductivity(tweetPoint, tweet, map_);
             }
         }
     }
-    tweets->close();
-    delete tweets;
-}
-
-void RenderUsaMap::DrawPolygons() const
-{
-    painter_->setPen(Qt::black);
-    for (auto i = 1; i < polygons_.size(); ++i)
-    {
-        if (polygons_[i].second >= 0)
-            painter_->setBrush(QColor(qRgb(polygons_[i].second * 25, 255, 255)));
-        else painter_->setBrush(QColor(qRgb(255, 255, abs(polygons_[i].second) * 25)));
-        painter_->drawPolygon(polygons_[i].first);
-    }
+    tweets.close();
 }
 
 void RenderUsaMap::paintEvent(QPaintEvent*)
 {
     painter_ = new QPainter(this);
-    DrawPolygons();
+    DrawStates();
     delete painter_;
 }
 
@@ -118,3 +85,4 @@ RenderUsaMap::~RenderUsaMap()
     if (painter_)
         delete painter_;
 }
+
